@@ -124,6 +124,13 @@ export default function ExamClient({ config }: ExamClientProps) {
     [submitted, questions, answers, totalMarks, config, router]
   );
 
+  // ── Stop camera when exam is submitted ───────────────────────────────────
+  useEffect(() => {
+    if (submitted && cameraStream) {
+      cameraStream.getTracks().forEach((t) => t.stop());
+    }
+  }, [submitted, cameraStream]);
+
   // ── Countdown timer ───────────────────────────────────────────────────────
   useEffect(() => {
     if (!cameraStream || submitted) return;
@@ -263,7 +270,7 @@ export default function ExamClient({ config }: ExamClientProps) {
 
       {/* ── Tab warning banner ───────────────────────────────────────────── */}
       {warningMessage && (
-        <div className="sticky top-14.25 z-30 flex items-center gap-2 bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm font-medium text-amber-800">
+        <div className="sticky sm:text-[14px] text-[12px] top-14.25 z-30 flex items-center gap-2 bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm font-medium text-amber-800">
           <AlertTriangle className="size-4 shrink-0" />
           <span>{warningMessage}</span>
           <button
@@ -294,7 +301,7 @@ export default function ExamClient({ config }: ExamClientProps) {
             <button
               disabled={isFirst}
               onClick={() => goTo(currentIndex - 1)}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-4 py-2 sm:text-sm text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="size-4" />
               Previous
@@ -302,7 +309,7 @@ export default function ExamClient({ config }: ExamClientProps) {
             <button
               disabled={isLast}
               onClick={() => goTo(currentIndex + 1)}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-4 py-2 sm:text-sm text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Next
               <ChevronRight className="size-4" />
@@ -340,7 +347,7 @@ export default function ExamClient({ config }: ExamClientProps) {
               onClick={() => setShowConfirmModal(true)}
               className="w-full rounded-lg bg-blue-700 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {hasVisitedLast ? "Submit Exam" : "Go to last question first"}
+              {hasVisitedLast ? "Submit Exam" : "Submit Exam"}
             </button>
           </div>
         </div>

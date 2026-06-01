@@ -100,6 +100,61 @@ const ugdbeQuestions: Question[] = [
     correctAnswer: "Strengths, Weaknesses, Opportunities, Threats",
     marks: 2,
   },
+  {
+    id: 11,
+    text: "Which design tool is commonly used for creating UI prototypes collaboratively online?",
+    options: ["Sketch", "Figma", "CorelDRAW", "GIMP"],
+    correctAnswer: "Figma",
+    marks: 2,
+  },
+  {
+    id: 12,
+    text: "What is 'white space' in design?",
+    options: [
+      "Empty area around design elements that aids readability",
+      "Areas filled with a white background color only",
+      "Unused storage space in a design file",
+      "Text rendered in white color",
+    ],
+    correctAnswer: "Empty area around design elements that aids readability",
+    marks: 4,
+  },
+  {
+    id: 13,
+    text: "What does the 'F-pattern' describe in UX research?",
+    options: [
+      "A navigation menu shaped like the letter F",
+      "The typical eye-movement pattern users follow when reading web pages",
+      "A wireframing technique",
+      "A framework for accessibility testing",
+    ],
+    correctAnswer: "The typical eye-movement pattern users follow when reading web pages",
+    marks: 4,
+  },
+  {
+    id: 14,
+    text: "A business 'burn rate' refers to?",
+    options: [
+      "The speed at which products are manufactured",
+      "How quickly a company spends its cash reserves",
+      "The rate of customer churn",
+      "The pace of employee onboarding",
+    ],
+    correctAnswer: "How quickly a company spends its cash reserves",
+    marks: 4,
+  },
+  {
+    id: 15,
+    text: "In Agile methodology, what is a 'sprint retrospective'?",
+    options: [
+      "A demo of completed features to stakeholders",
+      "A meeting to plan the next sprint backlog",
+      "A reflection meeting to discuss what went well and what to improve",
+      "A review of the product roadmap",
+    ],
+    correctAnswer: "A reflection meeting to discuss what went well and what to improve",
+    marks: 4,
+  },
 ];
 
 const techScholarshipQuestions: Question[] = [
@@ -193,6 +248,56 @@ const techScholarshipQuestions: Question[] = [
     correctAnswer: "404",
     marks: 4,
   },
+  {
+    id: 11,
+    text: "Which of the following is NOT a JavaScript data type?",
+    options: ["String", "Boolean", "Float", "Symbol"],
+    correctAnswer: "Float",
+    marks: 4,
+  },
+  {
+    id: 12,
+    text: "What does 'SSL/TLS' provide in web communication?",
+    options: [
+      "Faster page load speeds",
+      "Encrypted and secure data transmission",
+      "Server-side rendering",
+      "Caching of static assets",
+    ],
+    correctAnswer: "Encrypted and secure data transmission",
+    marks: 4,
+  },
+  {
+    id: 13,
+    text: "In object-oriented programming, 'encapsulation' means?",
+    options: [
+      "Inheriting properties from a parent class",
+      "Bundling data and methods that operate on it within a single unit",
+      "Overriding a method in a subclass",
+      "Creating multiple instances of a class",
+    ],
+    correctAnswer: "Bundling data and methods that operate on it within a single unit",
+    marks: 6,
+  },
+  {
+    id: 14,
+    text: "What does 'CRUD' stand for in database operations?",
+    options: [
+      "Create, Read, Update, Delete",
+      "Connect, Retrieve, Upload, Deploy",
+      "Cache, Render, Update, Delete",
+      "Compile, Run, Upload, Debug",
+    ],
+    correctAnswer: "Create, Read, Update, Delete",
+    marks: 4,
+  },
+  {
+    id: 15,
+    text: "Which sorting algorithm has the best average-case time complexity?",
+    options: ["Bubble Sort", "Selection Sort", "Merge Sort", "Insertion Sort"],
+    correctAnswer: "Merge Sort",
+    marks: 6,
+  },
 ];
 
 const scienceScholarshipQuestions: Question[] = [
@@ -265,6 +370,56 @@ const scienceScholarshipQuestions: Question[] = [
     options: ["Volt", "Watt", "Ampere", "Ohm"],
     correctAnswer: "Ampere",
     marks: 4,
+  },
+  {
+    id: 11,
+    text: "What is the process of nuclear fusion?",
+    options: [
+      "Splitting a heavy nucleus into smaller ones",
+      "Combining light nuclei to form a heavier nucleus releasing energy",
+      "Converting matter directly into electricity",
+      "Radioactive decay of unstable isotopes",
+    ],
+    correctAnswer: "Combining light nuclei to form a heavier nucleus releasing energy",
+    marks: 6,
+  },
+  {
+    id: 12,
+    text: "Which law states that the pressure of a gas is inversely proportional to its volume at constant temperature?",
+    options: ["Charles's Law", "Avogadro's Law", "Boyle's Law", "Gay-Lussac's Law"],
+    correctAnswer: "Boyle's Law",
+    marks: 4,
+  },
+  {
+    id: 13,
+    text: "What is the primary function of white blood cells?",
+    options: [
+      "Carrying oxygen throughout the body",
+      "Clotting blood at wound sites",
+      "Defending the body against infections",
+      "Transporting nutrients from the digestive system",
+    ],
+    correctAnswer: "Defending the body against infections",
+    marks: 4,
+  },
+  {
+    id: 14,
+    text: "In the periodic table, elements in the same column share?",
+    options: [
+      "The same atomic mass",
+      "The same number of protons",
+      "Similar chemical properties",
+      "The same electron configuration",
+    ],
+    correctAnswer: "Similar chemical properties",
+    marks: 4,
+  },
+  {
+    id: 15,
+    text: "What type of wave does NOT require a medium to travel?",
+    options: ["Sound wave", "Water wave", "Electromagnetic wave", "Seismic wave"],
+    correctAnswer: "Electromagnetic wave",
+    marks: 6,
   },
 ];
 
@@ -368,6 +523,56 @@ const managementScholarshipQuestions: Question[] = [
     ],
     correctAnswer: "Dividing the market into distinct groups of buyers with different needs",
     marks: 4,
+  },
+  {
+    id: 11,
+    text: "What is 'economies of scale'?",
+    options: [
+      "The study of national economic output",
+      "Cost advantages gained by increasing production volume",
+      "A pricing strategy for luxury goods",
+      "The process of outsourcing to reduce costs",
+    ],
+    correctAnswer: "Cost advantages gained by increasing production volume",
+    marks: 4,
+  },
+  {
+    id: 12,
+    text: "Which financial statement shows a company's revenues and expenses over a period?",
+    options: ["Balance Sheet", "Cash Flow Statement", "Income Statement", "Equity Report"],
+    correctAnswer: "Income Statement",
+    marks: 4,
+  },
+  {
+    id: 13,
+    text: "'Diversification' as a business strategy means?",
+    options: [
+      "Reducing the product line to focus on one item",
+      "Entering new markets or developing new products to spread risk",
+      "Increasing the price of existing products",
+      "Acquiring a direct competitor",
+    ],
+    correctAnswer: "Entering new markets or developing new products to spread risk",
+    marks: 6,
+  },
+  {
+    id: 14,
+    text: "What does 'ROI' stand for?",
+    options: ["Rate of Inflation", "Return on Investment", "Revenue over Income", "Risk of Insolvency"],
+    correctAnswer: "Return on Investment",
+    marks: 2,
+  },
+  {
+    id: 15,
+    text: "The 'Boston Matrix' is used to?",
+    options: [
+      "Analyze employee performance",
+      "Classify products based on market growth and market share",
+      "Map supply chain logistics",
+      "Plan marketing campaigns",
+    ],
+    correctAnswer: "Classify products based on market growth and market share",
+    marks: 6,
   },
 ];
 

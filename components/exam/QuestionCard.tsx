@@ -26,11 +26,11 @@ export default function QuestionCard({
           Q{questionNumber}
         </span>
         <div className="flex-1">
-          <p className="text-xs font-medium text-gray-400 mb-1">
+          <p className="text-xs font-medium text-gray-400 mb-1 hidden">
             Question {questionNumber} of {totalQuestions} • {question.marks}{" "}
             {question.marks === 1 ? "mark" : "marks"}
           </p>
-          <p className="text-base font-medium text-gray-900 leading-relaxed">{question.text}</p>
+          <p className="sm:text-base  text-sm font-medium text-gray-900 leading-relaxed">{question.text}</p>
         </div>
       </div>
 
@@ -44,7 +44,7 @@ export default function QuestionCard({
               type="button"
               onClick={() => onSelect(option)}
               className={cn(
-                "flex items-center gap-4 rounded-xl border-2 px-4 py-3 text-left transition-all",
+                "flex items-center gap-4 rounded-xl border-2 px-4 sm:py-3 py-2 text-left transition-all",
                 isSelected
                   ? "border-blue-600 bg-blue-50 text-blue-900"
                   : "border-gray-100 bg-white text-gray-800 hover:border-blue-200 hover:bg-blue-50/50"
@@ -60,7 +60,7 @@ export default function QuestionCard({
               >
                 {labels[idx]}
               </span>
-              <span className="text-sm font-medium">{option}</span>
+              <span className="sm:text-sm text-xs font-medium">{option}</span>
             </button>
           );
         })}
