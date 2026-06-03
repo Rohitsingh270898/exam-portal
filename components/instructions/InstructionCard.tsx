@@ -14,7 +14,7 @@ export default function InstructionCard({ Icon, title, description }: Instructio
       </div>
       <div>
         <p className="font-semibold text-gray-900 text-sm">{title}</p>
-        <p className="mt-0.5 text-sm text-gray-500 leading-relaxed">{description}</p>
+        <p className="mt-0.5 sm:text-sm text-[12px] text-gray-500 leading-relaxed">{description}</p>
       </div>
     </div>
   );

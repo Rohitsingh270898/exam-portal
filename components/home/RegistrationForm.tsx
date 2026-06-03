@@ -18,8 +18,8 @@ interface FieldProps {
 
 function Field({ id, label, type = "text", placeholder, value, onChange, error, required }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-medium text-gray-700">
+    <div className="flex flex-col sm:gap-1.5 gap-1">
+      <label htmlFor={id} className="sm:text-sm text-[12px] font-medium text-gray-700">
         {label}
       </label>
       <input
@@ -31,7 +31,7 @@ function Field({ id, label, type = "text", placeholder, value, onChange, error, 
         required={required}
         aria-invalid={!!error}
         className={cn(
-          "w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-900 placeholder:text-gray-400",
+          "w-full rounded-lg border px-3.5 py-2.5 text-[16px] text-gray-900 placeholder:text-gray-400",
           "outline-none transition-shadow focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600",
           error ? "border-red-400" : "border-gray-200"
         )}
@@ -115,8 +115,8 @@ export default function RegistrationForm({ examSlug }: RegistrationFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3 sm:gap-5">
+      <div className="sm:grid grid-cols-1 flex sm:grid-cols-2 gap-4">
         <Field
           id="firstName"
           label="First name"

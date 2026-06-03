@@ -17,6 +17,7 @@ export default function QuestionCard({
   onSelect,
 }: QuestionCardProps) {
   const labels = ["A", "B", "C", "D"];
+  const isOpen = question.type === "open";
 
   return (
     <div className="flex flex-col sm:gap-6 gap-2">
@@ -34,37 +35,47 @@ export default function QuestionCard({
         </div>
       </div>
 
-      {/* Options */}
-      <div className="flex flex-col gap-3">
-        {question.options.map((option, idx) => {
-          const isSelected = selectedAnswer === option;
-          return (
-            <button
-              key={option}
-              type="button"
-              onClick={() => onSelect(option)}
-              className={cn(
-                "flex items-center gap-4 rounded-xl border-2 px-4 sm:py-3 py-2 text-left transition-all",
-                isSelected
-                  ? "border-blue-600 bg-blue-50 text-blue-900"
-                  : "border-gray-100 bg-white text-gray-800 hover:border-blue-200 hover:bg-blue-50/50"
-              )}
-            >
-              <span
+      {/* Options or open-ended textarea */}
+      {isOpen ? (
+        <textarea
+          className="w-full rounded-xl border-2 border-gray-100 bg-white px-4 py-3 sm:text-sm text-xs text-gray-900 placeholder:text-gray-400 focus:border-blue-600 focus:outline-none transition-colors resize-none"
+          rows={6}
+          placeholder="Type your answer here..."
+          value={selectedAnswer ?? ""}
+          onChange={(e) => onSelect(e.target.value)}
+        />
+      ) : (
+        <div className="flex flex-col gap-3">
+          {question.options.map((option, idx) => {
+            const isSelected = selectedAnswer === option;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => onSelect(option)}
                 className={cn(
-                  "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border-2 transition-colors",
+                  "flex items-center gap-4 rounded-xl border-2 px-4 sm:py-3 py-2 text-left transition-all",
                   isSelected
-                    ? "border-blue-600 bg-blue-600 text-white"
-                    : "border-gray-200 text-gray-500"
+                    ? "border-blue-600 bg-blue-50 text-blue-900"
+                    : "border-gray-100 bg-white text-gray-800 hover:border-blue-200 hover:bg-blue-50/50"
                 )}
               >
-                {labels[idx]}
-              </span>
-              <span className="sm:text-sm text-xs font-medium">{option}</span>
-            </button>
-          );
-        })}
-      </div>
+                <span
+                  className={cn(
+                    "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold border-2 transition-colors",
+                    isSelected
+                      ? "border-blue-600 bg-blue-600 text-white"
+                      : "border-gray-200 text-gray-500"
+                  )}
+                >
+                  {labels[idx]}
+                </span>
+                <span className="sm:text-sm text-xs font-medium">{option}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

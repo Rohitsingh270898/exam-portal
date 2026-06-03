@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, BookmarkCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertTriangle, BookmarkCheck, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { CameraGate } from "./CameraFeed";
 import QuestionCard from "./QuestionCard";
@@ -25,8 +25,9 @@ interface ExamClientProps {
   config: ExamConfig;
 }
 
-// ─── Fisher-Yates shuffle for options ────────────────────────────────────────
+// ─── Fisher-Yates shuffle for options (skip open-ended questions) ────────────
 function shuffleQuestion(q: Question): Question {
+  if (q.type === "open" || q.options.length === 0) return q;
   const shuffledOptions = shuffleArray(q.options);
   return { ...q, options: shuffledOptions };
 }
@@ -47,8 +48,11 @@ export default function ExamClient({ config }: ExamClientProps) {
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
 
   // ── Load + shuffle questions once on mount ────────────────────────────────
+  // MCQ questions are shuffled; open-ended questions stay fixed at the end.
   const questions = useMemo<Question[]>(() => {
-    return shuffleArray(config.questions).map(shuffleQuestion);
+    const mcq = config.questions.filter((q) => q.type !== "open");
+    const open = config.questions.filter((q) => q.type === "open");
+    return [...shuffleArray(mcq).map(shuffleQuestion), ...open];
   }, [config]);
 
   const totalMarks = useMemo(() => getTotalMarks(config), [config]);
@@ -66,11 +70,37 @@ export default function ExamClient({ config }: ExamClientProps) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const startedAt = useRef(Date.now());
+  const submitBtnRef = useRef<HTMLButtonElement>(null);
+  const [submitVisible, setSubmitVisible] = useState(false);
 
   // ── Track when user reaches the last question ─────────────────────────────
   useEffect(() => {
     if (currentIndex === totalQuestions - 1) setHasVisitedLast(true);
   }, [currentIndex, totalQuestions]);
+
+  // ── Observe submit button visibility for scroll hint ─────────────────────
+  useEffect(() => {
+    function checkVisibility() {
+      const el = submitBtnRef.current;
+      if (!el) {
+        setSubmitVisible(false);
+        return;
+      }
+      const rect = el.getBoundingClientRect();
+      const inView =
+        rect.top >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight);
+      setSubmitVisible(inView);
+    }
+
+    checkVisibility();
+    window.addEventListener("scroll", checkVisibility, { passive: true });
+    window.addEventListener("resize", checkVisibility, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", checkVisibility);
+      window.removeEventListener("resize", checkVisibility);
+    };
+  }, []);
 
   // ── Submit exam ───────────────────────────────────────────────────────────
   const submitExam = useCallback(
@@ -188,11 +218,17 @@ export default function ExamClient({ config }: ExamClientProps) {
 
   // ── Answer & navigation helpers ───────────────────────────────────────────
   const handleSelectAnswer = useCallback((answer: string) => {
-    setAnswers((prev) => ({ ...prev, [currentIndex]: answer }));
+    // Treat empty string (cleared textarea) as null so it counts as unanswered
+    const value = answer || null;
+    setAnswers((prev) => ({ ...prev, [currentIndex]: value }));
     setStatuses((prev) => ({
       ...prev,
       [currentIndex]:
-        prev[currentIndex] === "marked" ? "marked" : "answered",
+        prev[currentIndex] === "marked"
+          ? "marked"
+          : value
+          ? "answered"
+          : "unanswered",
     }));
   }, [currentIndex]);
 
@@ -343,15 +379,27 @@ export default function ExamClient({ config }: ExamClientProps) {
 
             {/* Submit — only enabled after visiting the last question */}
             <button
+              ref={submitBtnRef}
               disabled={!hasVisitedLast}
               onClick={() => setShowConfirmModal(true)}
               className="w-full rounded-lg bg-blue-700 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              {hasVisitedLast ? "Submit Exam" : "Submit Exam"}
+              Submit Exam
             </button>
           </div>
         </div>
       </main>
+
+      {/* ── Scroll-to-submit hint (last question, submit off-screen, mobile) ── */}
+      {isLast && !submitVisible && (
+        <button
+          onClick={() => submitBtnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
+          className="lg:hidden fixed bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 rounded-full bg-blue-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-blue-300 animate-bounce"
+        >
+          <ChevronDown className="size-4" />
+          Scroll to Submit
+        </button>
+      )}
 
       {/* Camera stream kept alive for proctoring — preview intentionally hidden */}
 

@@ -40,11 +40,11 @@ const FEATURES = [
 
 export default function FeatureSection() {
   return (
-    <section className="bg-gray-50 pt-10 pb-10 sm:py-20 px-4">
-      <div className="mx-auto max-w-5xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900">How the exam works</h2>
-          <p className="mt-2 text-gray-500">A secure, proctored exam built for fairness.</p>
+    <section className="bg-gray-50 pt-6 pb-10 sm:py-15 px-4">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center sm:mb-12 mb-4">
+          <h2 className="sm:text-3xl text-2xl text-left font-bold text-gray-900">How the exam works</h2>
+          <p className="sm:mt-2 mt-1 text-gray-500 text-[12px] sm:text-sm text-left">A secure, proctored exam built for fairness.</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
           {FEATURES.map((feature) => (

@@ -23,15 +23,15 @@ export default function QuestionPalette({
 }: QuestionPaletteProps) {
   const [windowStart, setWindowStart] = useState(0);
 
-  // Auto-slide the window to keep `current` always visible
+  // Auto-slide: when the active question changes, snap to its page.
+  // Does NOT fire when the user manually moves the window with arrows.
   useEffect(() => {
     if (total <= WINDOW_SIZE) return;
-    if (current >= windowStart + WINDOW_SIZE) {
-      setWindowStart(Math.min(current - WINDOW_SIZE + 1, total - WINDOW_SIZE));
-    } else if (current < windowStart) {
-      setWindowStart(Math.max(current, 0));
-    }
-  }, [current, total, windowStart]);
+    setWindowStart(Math.min(
+      Math.floor(current / WINDOW_SIZE) * WINDOW_SIZE,
+      total - WINDOW_SIZE
+    ));
+  }, [current, total]);
 
   const isPaginated = total > WINDOW_SIZE;
   const visibleQuestions = Array.from(
@@ -72,7 +72,7 @@ export default function QuestionPalette({
       {isPaginated && (
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setWindowStart((s) => Math.max(0, s - SLIDE_AMOUNT))}
+            onClick={() => setWindowStart((s) => Math.max(0, s - WINDOW_SIZE))}
             disabled={!canGoPrev}
             aria-label="Show previous questions"
             className="flex size-6 shrink-0 items-center justify-center rounded border border-gray-200 bg-white text-gray-400
@@ -89,7 +89,7 @@ export default function QuestionPalette({
 
           <button
             onClick={() =>
-              setWindowStart((s) => Math.min(total - WINDOW_SIZE, s + SLIDE_AMOUNT))
+              setWindowStart((s) => Math.min(total - WINDOW_SIZE, s + WINDOW_SIZE))
             }
             disabled={!canGoNext}
             aria-label="Show next questions"

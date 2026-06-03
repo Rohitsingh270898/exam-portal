@@ -80,11 +80,11 @@ export default async function InstructionsPage({ params }: Props) {
           ))}
         </div>
 
-        <div className="mt-8 rounded-2xl border border-gray-100 bg-gray-50 p-6">
+        <div className="sm:mt-8 mt-4 rounded-2xl border border-gray-100 bg-gray-50 p-6">
           <h3 className="text-base font-bold text-gray-900 mb-3">Code of Conduct</h3>
           <ul className="flex flex-col gap-2">
             {conductRules.map((rule) => (
-              <li key={rule} className="flex items-start gap-2 text-sm text-gray-600">
+              <li key={rule} className="flex items-start gap-2 text-[12px] sm:text-sm text-gray-600">
                 <span className="mt-1 size-1.5 shrink-0 rounded-full bg-gray-400" />
                 {rule}
               </li>

@@ -2,12 +2,14 @@ export interface Question {
   id: number;
   /** The question text shown to the candidate. */
   text: string;
-  /** Four answer options. These are shuffled at runtime; grading uses `correctAnswer`. */
+  /** Answer options for MCQ. Empty for open-ended questions. */
   options: string[];
-  /** Exact text of the correct option — compared against selected string for grading. */
+  /** Exact text of the correct option — compared against selected string for grading. Empty for open-ended. */
   correctAnswer: string;
   /** Points awarded for a correct answer. */
   marks: number;
+  /** "open" = free-text answer; omit or "mcq" = multiple choice (default). */
+  type?: "mcq" | "open";
 }
 
 export interface ExamConfig {
