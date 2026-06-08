@@ -2,9 +2,46 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, XCircle, Clock, Award, BookOpen, RotateCcw, MessageCircle, Mail, Phone } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Award, BookOpen, RotateCcw, MessageCircle, Mail, Phone, Download, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ExamResult } from "@/lib/types";
+
+// ─── Download PDF helper ─────────────────────────────────────────────────────
+function DownloadPDFButton({ fileName }: { fileName: string }) {
+  const [loading, setLoading] = useState(false);
+  const [available, setAvailable] = useState(false);
+
+  useEffect(() => {
+    setAvailable(!!sessionStorage.getItem("examPDF"));
+  }, []);
+
+  if (!available) return null;
+
+  function handleDownload() {
+    const dataUri = sessionStorage.getItem("examPDF");
+    if (!dataUri) return;
+    setLoading(true);
+    try {
+      const link = document.createElement("a");
+      link.href = dataUri;
+      link.download = fileName;
+      link.click();
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleDownload}
+      disabled={loading}
+      className="group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-60"
+    >
+      <FileText className="size-4 shrink-0" />
+      {loading ? "Preparing PDF…" : "Download Response Sheet (PDF)"}
+    </button>
+  );
+}
 
 // ─── UGDBE Confirmation Banner ────────────────────────────────────────────────
 function UGDBEConfirmationCard({ name }: { name: string }) {
@@ -106,6 +143,9 @@ function UGDBEConfirmationCard({ name }: { name: string }) {
             iide.in/UG-Program-in-Digital-Business-and-Entrepreneurship
           </a>
         </p>
+
+        {/* Download PDF */}
+        <DownloadPDFButton fileName={`${name.replace(/\s+/g, "-") || "result"}-response-sheet.pdf`} />
       </div>
     </div>
   );
@@ -299,6 +339,9 @@ export default function ResultDisplay() {
             Save / Print result
           </button>
         </div>
+
+        {/* PDF download */}
+        <DownloadPDFButton fileName={`${fullName.replace(/\s+/g, "-") || "result"}-response-sheet.pdf`} />
       </div>
     </div>
   );

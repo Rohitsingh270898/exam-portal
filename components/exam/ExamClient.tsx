@@ -18,6 +18,44 @@ import { cn, shuffleArray } from "@/lib/utils";
 import { getTotalMarks } from "@/lib/exams";
 import type { ExamConfig } from "@/lib/exams";
 import type { ExamResult, Question, QuestionStatus, UserData } from "@/lib/types";
+import { generateExamPDF } from "@/lib/pdf";
+
+// ─── Make.com webhook ────────────────────────────────────────────────────────
+const MAKE_WEBHOOK_URL =
+  "https://hook.eu1.make.com/ibe96ktgegkyscev9ee54t7r7cxvfk2m";
+
+/**
+ * Send data to Make.com webhook.
+ * Uses sendBeacon (fire-and-forget, survives page navigation) as primary,
+ * falls back to fetch if beacon is unavailable or payload is too large.
+ */
+function postToWebhook(
+  user: UserData,
+  courseName: string,
+  pdfDataUri: string
+): void {
+  const payload = JSON.stringify({
+    Mobile: user.phone,
+    Email: user.email,
+    "Course Name": courseName,
+    "Entrance Test Link": pdfDataUri,
+  });
+
+  // sendBeacon works even after page navigates away
+  const blob = new Blob([payload], { type: "application/json" });
+  const sent = navigator.sendBeacon(MAKE_WEBHOOK_URL, blob);
+
+  if (!sent) {
+    // Fallback: fetch (best-effort)
+    fetch(MAKE_WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+    }).catch((err) => console.error("[Webhook] fetch fallback failed:", err));
+  } else {
+    console.log("[Webhook] sendBeacon queued successfully");
+  }
+}
 
 const MAX_TAB_SWITCHES = 3;
 
@@ -104,7 +142,7 @@ export default function ExamClient({ config }: ExamClientProps) {
 
   // ── Submit exam ───────────────────────────────────────────────────────────
   const submitExam = useCallback(
-    (cause: "manual" | "timer" | "tab") => {
+    async (cause: "manual" | "timer" | "tab") => {
       if (submitted) return;
       setSubmitted(true);
 
@@ -149,6 +187,26 @@ export default function ExamClient({ config }: ExamClientProps) {
 
       sessionStorage.setItem("examResult", JSON.stringify(result));
       sessionStorage.removeItem("examUser");
+
+      // ── Generate PDF, store it, then post to Make.com ─────────────────────
+      // We await PDF generation so:
+      //   1. The PDF data URI is saved to sessionStorage (result page can download it)
+      //   2. sendBeacon is called before router.replace (survives navigation)
+      try {
+        const pdfDataUri = await generateExamPDF(result, config, questions);
+        // Store PDF for the result page's download button
+        sessionStorage.setItem("examPDF", pdfDataUri);
+        console.log(
+          "[PDF] Generated successfully, size:",
+          Math.round(pdfDataUri.length / 1024),
+          "KB"
+        );
+        // Post to webhook BEFORE navigating (sendBeacon survives the page transition)
+        postToWebhook(result.user, config.name, pdfDataUri);
+      } catch (err) {
+        console.error("[PDF/Webhook] Failed:", err);
+      }
+
       router.replace(`/${config.slug}/result`);
     },
     [submitted, questions, answers, totalMarks, config, router]
