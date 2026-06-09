@@ -118,6 +118,7 @@ export default function ExamClient({ config }: ExamClientProps) {
   const tabSwitchCount = useRef(0);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const [submitVisible, setSubmitVisible] = useState(false);
+  const isSubmitting = useRef(false);
 
 
 
@@ -148,14 +149,21 @@ export default function ExamClient({ config }: ExamClientProps) {
   // ── Submit exam ───────────────────────────────────────────────────────────
   const submitExam = useCallback(
     async (cause: "manual" | "timer" | "tab") => {
-      if (submitted) return;
+      if (submitted || isSubmitting.current) {
+        console.log(`[ExamClient] Submission already in progress or completed. Ignoring submit call from cause: ${cause}`);
+        return;
+      }
+      isSubmitting.current = true;
       console.log(`[ExamClient] Submitting exam. Cause: ${cause}`);
       setSubmitted(true);
 
       const userData = (() => {
         try {
-          return JSON.parse(sessionStorage.getItem("examUser") ?? "null") as UserData | null;
-        } catch {
+          const rawUser = sessionStorage.getItem("examUser");
+          console.log("[ExamClient] Raw examUser from sessionStorage:", rawUser);
+          return JSON.parse(rawUser ?? "null") as UserData | null;
+        } catch (e) {
+          console.error("[ExamClient] Failed to parse examUser:", e);
           return null;
         }
       })();
@@ -230,7 +238,8 @@ export default function ExamClient({ config }: ExamClientProps) {
         }
 
         // Post to webhook BEFORE navigating (await ensures transmission)
-        await postToWebhook(result.user, config.name, linkToSend, pdfDataUri);
+        const courseName = config.slug === "ugdbe" ? "Undergraduate Program" : config.name;
+        await postToWebhook(result.user, courseName, linkToSend, pdfDataUri);
       } catch (err) {
         console.error("[PDF/Webhook] Failed:", err);
       }
@@ -255,7 +264,9 @@ export default function ExamClient({ config }: ExamClientProps) {
       setTimeLeft((prev) => {
         if (prev <= 1) {
           clearInterval(id);
-          submitExam("timer");
+          if (!isSubmitting.current && !submitted) {
+            submitExam("timer");
+          }
           return 0;
         }
         return prev - 1;
@@ -270,6 +281,7 @@ export default function ExamClient({ config }: ExamClientProps) {
     if (!cameraStream || submitted) return;
 
     const handleVisibilityChange = () => {
+      if (submitted || isSubmitting.current) return;
       if (document.hidden) {
         tabSwitchCount.current += 1;
         const next = tabSwitchCount.current;
