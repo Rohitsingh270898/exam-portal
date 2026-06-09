@@ -8,7 +8,7 @@ export default function HomePage() {
 
   return (
     <main className="flex-1">
-      <section className="relative overflow-hidden bg-[#05005a] px-4 py-16 sm:py-24">
+      <section className="relative overflow-hidden bg-[#1e3b8a] px-4 py-16 sm:py-24">
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -25,7 +25,7 @@ export default function HomePage() {
 
           <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl">
             Win Your{" "}
-            <span className="text-blue-400">Scholarship</span>
+            <span className="text-[#ffd33d]">Scholarship</span>
             <br />
             Through Merit
           </h1>
@@ -41,15 +41,15 @@ export default function HomePage() {
                 href={`/${exam.slug}`}
                 className="group relative flex flex-col items-start rounded-2xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/20"
               >
-                <span className="text-xs font-semibold uppercase tracking-widest text-blue-400">
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#ffd33d]">
                   {exam.slug}
                 </span>
-                <h2 className="mt-2 text-lg font-bold text-white group-hover:text-blue-300 transition-colors">
+                <h2 className="mt-2 text-lg font-bold text-white group-hover:text-[#ffd33d] transition-colors">
                   {exam.name}
                 </h2>
                 <p className="mt-1 text-sm text-white/60">{exam.subtitle}</p>
                 <p className="mt-3 text-xs text-white/40">{exam.questions.length} questions</p>
-                <ArrowRight className="mt-4 size-4 text-white/40 group-hover:text-blue-400 transition-colors" />
+                <ArrowRight className="mt-4 size-4 text-white/40 group-hover:text-[#ffd33d] transition-colors" />
               </Link>
             ))}
           </div>

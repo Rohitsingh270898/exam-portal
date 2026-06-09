@@ -36,7 +36,7 @@ export default async function ExamHomePage({ params }: Props) {
   return (
     <main className="flex-1">
       {/* ── Hero / Registration ──────────────────────────────────────────── */}
-      <section className="relative bg-[#05005a] px-4 pt-3 pb-10 sm:py-24">
+      <section className="relative bg-[#1e3b8a] px-4 pt-3 pb-10 sm:py-24">
         <div
           className="pointer-events-none absolute inset-0 overflow-hidden"
           style={{
@@ -55,7 +55,7 @@ export default async function ExamHomePage({ params }: Props) {
 
             <h1 className="text-[18px] font-extrabold leading-tight tracking-tight text-white sm:text-6xl">
               Win Your{" "}
-              <span className="text-blue-400">Scholarship </span>
+              <span className="text-[#ffd33d]">Scholarship </span>
               Through Merit
             </h1>
 

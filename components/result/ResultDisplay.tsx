@@ -54,10 +54,10 @@ function UGDBEConfirmationCard({ name }: { name: string }) {
     <div className="relative overflow-hidden rounded-2xl shadow-xl border border-blue-100">
       {/* Decorative blobs */}
       <div className="pointer-events-none absolute -top-10 -right-10 size-48 rounded-full bg-blue-400/20 blur-2xl" />
-      <div className="pointer-events-none absolute -bottom-10 -left-10 size-40 rounded-full bg-indigo-400/20 blur-2xl" />
+      <div className="pointer-events-none absolute -bottom-10 -left-10 size-40 rounded-full bg-blue-400/20 blur-2xl" />
 
       {/* Header */}
-      <div className="relative bg-linear-to-br from-blue-600 via-blue-700 to-indigo-800 sm:px-6 px-3 py-5 sm:py-10 text-center">
+      <div className="relative bg-linear-to-br from-blue-600 via-blue-700 to-blue-800 sm:px-6 px-3 py-5 sm:py-10 text-center">
         {/* Animated ring */}
         <div className="mx-auto mb-5 flex size-20 items-center justify-center rounded-full bg-white/10 ring-4 ring-white/20">
           <div className="flex size-14 items-center justify-center rounded-full bg-white shadow-lg">

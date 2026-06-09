@@ -66,7 +66,7 @@ export default async function InstructionsPage({ params }: Props) {
     <main className="min-h-screen bg-white py-4 sm:py-12 px-4">
       <div className="mx-auto max-w-3xl">
         <div className="sm:mb-10 mb-4 text-center">
-          <div className="sm:mb-4 mb-2 inline-flex items-center gap-2 rounded-full border border-indigo-100 bg-indigo-50 px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-indigo-700">
+          <div className="sm:mb-4 mb-2 inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-4 py-1.5 text-sm font-semibold uppercase tracking-widest text-blue-700">
             <GraduationCap className="size-4" />
             {exam.name}
           </div>

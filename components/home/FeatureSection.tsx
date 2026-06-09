@@ -9,7 +9,7 @@ interface FeatureCardProps {
 function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-      <div className="flex size-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+      <div className="flex size-12 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
         {icon}
       </div>
       <div>

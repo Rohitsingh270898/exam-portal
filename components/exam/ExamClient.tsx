@@ -358,7 +358,7 @@ export default function ExamClient({ config }: ExamClientProps) {
             <span className="text-sm font-semibold text-gray-900 capitalize">
               {config.name}
             </span>
-            <span className="hidden sm:inline rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 capitalize">
+            <span className="hidden sm:inline rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 capitalize">
               {config.slug}
             </span>
           </div>

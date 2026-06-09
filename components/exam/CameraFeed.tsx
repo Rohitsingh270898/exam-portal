@@ -91,8 +91,8 @@ export function CameraGate({ onStreamReady }: CameraGateProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 sm:p-6 p-3">
       <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-3 sm:p-10 shadow-sm text-center">
-        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-indigo-50">
-          <Camera className="size-8 text-indigo-700" />
+        <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-blue-50">
+          <Camera className="size-8 text-blue-700" />
         </div>
         <h2 className="text-xl font-bold text-gray-900">Camera & microphone required</h2>
         <p className="mt-2 text-sm text-gray-500 leading-relaxed">
