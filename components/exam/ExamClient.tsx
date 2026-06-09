@@ -29,31 +29,35 @@ const MAKE_WEBHOOK_URL =
  * Uses sendBeacon (fire-and-forget, survives page navigation) as primary,
  * falls back to fetch if beacon is unavailable or payload is too large.
  */
-function postToWebhook(
+async function postToWebhook(
   user: UserData,
   courseName: string,
+  pdfUrl: string,
   pdfDataUri: string
-): void {
+): Promise<void> {
+  const rawBase64 = pdfDataUri.replace(/^data:application\/pdf;.*base64,/, "");
   const payload = JSON.stringify({
     Mobile: user.phone,
     Email: user.email,
     "Course Name": courseName,
-    "Entrance Test Link": pdfDataUri,
+    "Entrance Test Link": pdfUrl,
+    "PDF Base64": rawBase64,
   });
 
-  // sendBeacon works even after page navigates away
-  const blob = new Blob([payload], { type: "application/json" });
-  const sent = navigator.sendBeacon(MAKE_WEBHOOK_URL, blob);
-
-  if (!sent) {
-    // Fallback: fetch (best-effort)
-    fetch(MAKE_WEBHOOK_URL, {
+  console.log("[Webhook] Posting data to Make.com webhook...");
+  try {
+    const res = await fetch(MAKE_WEBHOOK_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: payload,
-    }).catch((err) => console.error("[Webhook] fetch fallback failed:", err));
-  } else {
-    console.log("[Webhook] sendBeacon queued successfully");
+    });
+    if (res.ok) {
+      console.log("[Webhook] Webhook POST succeeded");
+    } else {
+      console.error("[Webhook] Webhook POST failed with status:", res.status);
+    }
+  } catch (err) {
+    console.error("[Webhook] Webhook POST request failed:", err);
   }
 }
 
@@ -201,8 +205,32 @@ export default function ExamClient({ config }: ExamClientProps) {
           Math.round(pdfDataUri.length / 1024),
           "KB"
         );
-        // Post to webhook BEFORE navigating (sendBeacon survives the page transition)
-        postToWebhook(result.user, config.name, pdfDataUri);
+
+        let linkToSend = pdfDataUri;
+        try {
+          const sanitizedEmail = (result.user.email || "guest").replace(/[^a-zA-Z0-9]/g, "_");
+          const fileName = `exam_${config.slug}_${sanitizedEmail}_${Date.now()}.pdf`;
+
+          console.log("[PDF] Uploading to server as:", fileName);
+          const uploadRes = await fetch(`/api/upload/${fileName}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dataUri: pdfDataUri }),
+          });
+
+          if (uploadRes.ok) {
+            const uploadData = await uploadRes.json();
+            linkToSend = uploadData.url;
+            console.log("[PDF] Uploaded successfully, URL:", linkToSend);
+          } else {
+            console.error(`[PDF] Upload failed with status ${uploadRes.status}`);
+          }
+        } catch (uploadErr) {
+          console.error("[PDF] Upload request failed:", uploadErr);
+        }
+
+        // Post to webhook BEFORE navigating (await ensures transmission)
+        await postToWebhook(result.user, config.name, linkToSend, pdfDataUri);
       } catch (err) {
         console.error("[PDF/Webhook] Failed:", err);
       }
