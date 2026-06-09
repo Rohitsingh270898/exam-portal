@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, XCircle, Clock, Award, BookOpen, RotateCcw, MessageCircle, Mail, Phone, Download, FileText } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Award, BookOpen, RotateCcw, Mail, Phone, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ExamResult } from "@/lib/types";
 
@@ -12,7 +12,9 @@ function DownloadPDFButton({ fileName }: { fileName: string }) {
   const [available, setAvailable] = useState(false);
 
   useEffect(() => {
-    setAvailable(!!sessionStorage.getItem("examPDF"));
+    Promise.resolve().then(() => {
+      setAvailable(!!sessionStorage.getItem("examPDF"));
+    });
   }, []);
 
   if (!available) return null;
@@ -184,13 +186,15 @@ export default function ResultDisplay() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem("examResult");
-      if (raw) setResult(JSON.parse(raw) as ExamResult);
-    } catch {
-      // Invalid data – leave as null
-    }
-    setLoaded(true);
+    Promise.resolve().then(() => {
+      try {
+        const raw = sessionStorage.getItem("examResult");
+        if (raw) setResult(JSON.parse(raw) as ExamResult);
+      } catch {
+        // Invalid data – leave as null
+      }
+      setLoaded(true);
+    });
   }, []);
 
   if (!loaded) return null;

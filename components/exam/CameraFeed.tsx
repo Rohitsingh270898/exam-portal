@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Camera, CameraOff } from "lucide-react";
 
@@ -119,33 +119,3 @@ export function CameraGate({ onStreamReady }: CameraGateProps) {
   );
 }
 
-// ─── Camera Preview (PiP) ─────────────────────────────────────────────────────
-interface CameraPreviewProps {
-  stream: MediaStream;
-}
-
-export function CameraPreview({ stream }: CameraPreviewProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
-    }
-    return () => {
-      stream.getTracks().forEach((t) => t.stop());
-    };
-  }, [stream]);
-
-  return (
-    <div className="fixed bottom-4 right-4 z-50 overflow-hidden rounded-xl border-2 border-blue-600 shadow-lg">
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        className="size-28 object-cover sm:size-36"
-        aria-label="Proctoring camera feed"
-      />
-    </div>
-  );
-}

@@ -9,14 +9,16 @@ async function cleanOldFiles(uploadDir: string) {
     const now = Date.now();
     const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
 
-    for (const file of files) {
-      const filePath = path.join(uploadDir, file);
-      const stats = await fs.stat(filePath);
-      if (now - stats.mtimeMs > thirtyDaysMs) {
-        await fs.unlink(filePath);
-        console.log(`[Cleanup] Deleted old PDF from server storage: ${file}`);
-      }
-    }
+    await Promise.all(
+      files.map(async (file) => {
+        const filePath = path.join(uploadDir, file);
+        const stats = await fs.stat(filePath);
+        if (now - stats.mtimeMs > thirtyDaysMs) {
+          await fs.unlink(filePath);
+          console.log(`[Cleanup] Deleted old PDF from server storage: ${file}`);
+        }
+      })
+    );
   } catch (err) {
     console.error("[Cleanup] Error running auto-delete for old files:", err);
   }
@@ -43,7 +45,7 @@ export async function GET(
         "Content-Disposition": `inline; filename="${safeFileName}"`,
       },
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "File not found" }, { status: 404 });
   }
 }
@@ -97,8 +99,9 @@ export async function POST(
       success: true,
       url: downloadUrl,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("[Upload API] Error:", error);
-    return NextResponse.json({ error: error.message || "Upload failed" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Upload failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

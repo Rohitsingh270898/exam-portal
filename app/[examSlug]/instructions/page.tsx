@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { GraduationCap, Clock, Camera, ShieldCheck, Shuffle, LayoutGrid, Award } from "lucide-react";
+import { GraduationCap, Clock, Camera, ShieldCheck, Shuffle } from "lucide-react";
 import type { Metadata } from "next";
 
 import InstructionCard from "@/components/instructions/InstructionCard";

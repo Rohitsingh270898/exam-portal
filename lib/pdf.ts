@@ -93,7 +93,6 @@ export async function generateExamPDF(
   const SKIP_TEXT:   [number, number, number] = [140, 140, 140];
   const OPEN_BG:     [number, number, number] = [248, 248, 248];
   const GREY_50:     [number, number, number] = [250, 250, 250];
-  const GREY_100:    [number, number, number] = [242, 242, 242];
   const GREY_200:    [number, number, number] = [218, 218, 218];
   const GREY_400:    [number, number, number] = [160, 160, 160];
   const GREY_700:    [number, number, number] = [80,  80,  80];
@@ -229,7 +228,6 @@ export async function generateExamPDF(
     const selected  = result.answers[idx] ?? null;
     const isCorrect = !isOpen && selected === q.correctAnswer;
     const isWrong   = !isOpen && selected !== null && !isCorrect;
-    const isSkipped = !isOpen && selected === null;
 
     // ── Section strip ─────────────────────────────────────────────────────────
     const sec    = getSectionInfo(q.id, config.slug);
@@ -378,7 +376,7 @@ export async function generateExamPDF(
     hour: "2-digit", minute: "2-digit",
   });
 
-  for (let p = 1; p <= totalPages; p++) {
+  Array.from({ length: totalPages }, (_, i) => i + 1).forEach((p) => {
     doc.setPage(p);
 
     // Thin top-of-footer separator
@@ -392,7 +390,7 @@ export async function generateExamPDF(
     );
     font("normal", 6, GREY_400);
     doc.text(`Page ${p} of ${totalPages}`, PW - M, PH - 5.5, { align: "right" });
-  }
+  });
 
   return doc.output("datauristring");
 }

@@ -105,20 +105,21 @@ export default function ExamClient({ config }: ExamClientProps) {
   const [answers, setAnswers] = useState<Record<number, string | null>>({});
   const [statuses, setStatuses] = useState<Record<number, QuestionStatus>>({});
   const [timeLeft, setTimeLeft] = useState(config.durationSeconds);
-  const [tabSwitchCount, setTabSwitchCount] = useState(0);
+
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [hasVisitedLast, setHasVisitedLast] = useState(totalQuestions === 1);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const startedAt = useRef(Date.now());
+  const startedAt = useRef(0);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
+  const tabSwitchCount = useRef(0);
   const submitBtnRef = useRef<HTMLButtonElement>(null);
   const [submitVisible, setSubmitVisible] = useState(false);
 
-  // ── Track when user reaches the last question ─────────────────────────────
-  useEffect(() => {
-    if (currentIndex === totalQuestions - 1) setHasVisitedLast(true);
-  }, [currentIndex, totalQuestions]);
+
 
   // ── Observe submit button visibility for scroll hint ─────────────────────
   useEffect(() => {
@@ -148,6 +149,7 @@ export default function ExamClient({ config }: ExamClientProps) {
   const submitExam = useCallback(
     async (cause: "manual" | "timer" | "tab") => {
       if (submitted) return;
+      console.log(`[ExamClient] Submitting exam. Cause: ${cause}`);
       setSubmitted(true);
 
       const userData = (() => {
@@ -158,16 +160,14 @@ export default function ExamClient({ config }: ExamClientProps) {
         }
       })();
 
-      let score = 0;
-      const answerRecord: Record<number, string | null> = {};
+      const answerRecord: Record<number, string | null> = Object.fromEntries(
+        questions.map((_, idx) => [idx, answers[idx] ?? null])
+      );
 
-      questions.forEach((q, idx) => {
-        const selected = answers[idx] ?? null;
-        answerRecord[idx] = selected;
-        if (selected === q.correctAnswer) {
-          score += q.marks;
-        }
-      });
+      const score = questions.reduce(
+        (sum, q, idx) => sum + (answers[idx] === q.correctAnswer ? q.marks : 0),
+        0
+      );
 
       const percentage = Math.round((score / totalMarks) * 100);
       const timeTaken = Math.round((Date.now() - startedAt.current) / 1000);
@@ -271,20 +271,18 @@ export default function ExamClient({ config }: ExamClientProps) {
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        setTabSwitchCount((prev) => {
-          const next = prev + 1;
-          if (next >= MAX_TAB_SWITCHES) {
-            setWarningMessage("Auto-submitted: you left the tab too many times.");
-            submitExam("tab");
-          } else {
-            setWarningMessage(
-              `Warning: You left the tab (${next}/${MAX_TAB_SWITCHES}). Leaving ${
-                MAX_TAB_SWITCHES - next
-              } more time(s) will auto-submit.`
-            );
-          }
-          return next;
-        });
+        tabSwitchCount.current += 1;
+        const next = tabSwitchCount.current;
+        if (next >= MAX_TAB_SWITCHES) {
+          setWarningMessage("Auto-submitted: you left the tab too many times.");
+          submitExam("tab");
+        } else {
+          setWarningMessage(
+            `Warning: You left the tab (${next}/${MAX_TAB_SWITCHES}). Leaving ${
+              MAX_TAB_SWITCHES - next
+            } more time(s) will auto-submit.`
+          );
+        }
       }
     };
 
@@ -331,7 +329,9 @@ export default function ExamClient({ config }: ExamClientProps) {
   }, [currentIndex, answers]);
 
   const goTo = useCallback((index: number) => {
-    setCurrentIndex(Math.max(0, Math.min(index, totalQuestions - 1)));
+    const target = Math.max(0, Math.min(index, totalQuestions - 1));
+    setCurrentIndex(target);
+    if (target === totalQuestions - 1) setHasVisitedLast(true);
   }, [totalQuestions]);
 
   // ── Before camera is granted, show gate ──────────────────────────────────

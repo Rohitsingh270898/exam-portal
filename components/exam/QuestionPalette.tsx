@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { QuestionStatus } from "@/lib/types";
@@ -13,7 +13,7 @@ interface QuestionPaletteProps {
 }
 
 const WINDOW_SIZE = 10;
-const SLIDE_AMOUNT = 5;
+
 
 export default function QuestionPalette({
   total,
@@ -23,15 +23,22 @@ export default function QuestionPalette({
 }: QuestionPaletteProps) {
   const [windowStart, setWindowStart] = useState(0);
 
-  // Auto-slide: when the active question changes, snap to its page.
-  // Does NOT fire when the user manually moves the window with arrows.
-  useEffect(() => {
-    if (total <= WINDOW_SIZE) return;
-    setWindowStart(Math.min(
-      Math.floor(current / WINDOW_SIZE) * WINDOW_SIZE,
-      total - WINDOW_SIZE
-    ));
-  }, [current, total]);
+  const [prevCurrent, setPrevCurrent] = useState(current);
+  const [prevTotal, setPrevTotal] = useState(total);
+
+  if (current !== prevCurrent || total !== prevTotal) {
+    setPrevCurrent(current);
+    setPrevTotal(total);
+    if (total > WINDOW_SIZE) {
+      const targetStart = Math.min(
+        Math.floor(current / WINDOW_SIZE) * WINDOW_SIZE,
+        total - WINDOW_SIZE
+      );
+      if (targetStart !== windowStart) {
+        setWindowStart(targetStart);
+      }
+    }
+  }
 
   const isPaginated = total > WINDOW_SIZE;
   const visibleQuestions = Array.from(
