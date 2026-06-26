@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { UserData } from "@/lib/types";
 import { ChevronDown, Search, Globe } from "lucide-react";
@@ -110,6 +110,7 @@ interface RegistrationFormProps {
 
 export default function RegistrationForm({ examSlug }: RegistrationFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const [firstName, setFirstName] = useState("");
@@ -121,6 +122,23 @@ export default function RegistrationForm({ examSlug }: RegistrationFormProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Pre-fill form from URL query params (e.g. ?name=John&last=Doe&email=j@x.com&phone=9876543210)
+  useEffect(() => {
+    const nameParam = searchParams.get("name");
+    const lastParam = searchParams.get("last");
+    const emailParam = searchParams.get("email");
+    const phoneParam = searchParams.get("phone");
+
+    if (nameParam) setFirstName(nameParam);
+    if (lastParam) setLastName(lastParam);
+    if (emailParam) setEmail(emailParam);
+    if (phoneParam) {
+      // Strip any non-digit chars and set as phone digits
+      const digits = phoneParam.replace(/\D/g, "");
+      setPhoneDigits(digits.slice(0, selectedCountry.maxLength));
+    }
+  }, [searchParams]);
 
   // Close dropdown on click outside
   useEffect(() => {
